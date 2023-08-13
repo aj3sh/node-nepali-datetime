@@ -1,6 +1,6 @@
 import dateConverter from './dateConverter'
 import { format, formatNepali, nepaliDateToString } from './format'
-import { parse, parseFormat } from './parse'
+import { getStrategyClass, InitStrategy } from './initStrategies'
 import { getDate, getNepalDateAndTime } from './utils'
 import { validateTime } from './validators'
 
@@ -67,53 +67,13 @@ class NepaliDate {
      * @throws {Error} If an invalid date argument is provided.
      */
     constructor(...args: any[]) {
-        if (args.length === 0) {
-            this._setDateObject(new Date())
-        } else if (args.length === 1) {
-            const e = args[0]
-            if (typeof e === 'object') {
-                if (e instanceof Date) {
-                    this._setDateObject(e)
-                } else if (e instanceof NepaliDate) {
-                    this.timestamp = e.timestamp
-                    this.year = e.year
-                    this.yearEn = e.yearEn
-                    this.month = e.month
-                    this.monthEn = e.monthEn
-                    this.day = e.day
-                    this.dayEn = e.dayEn
-                    this.hour = e.hour
-                    this.minute = e.minute
-                    this.weekDay = e.weekDay
-                } else {
-                    throw new Error('Invalid date argument')
-                }
-            } else if (typeof e === 'number') {
-                this._setDateObject(new Date(e))
-            } else if (typeof e === 'string') {
-                // Try to parse the date
-                this.set.apply(this, parse(e))
-            } else {
-                throw new Error('Invalid date argument')
-            }
-        } else if (
-            args.length === 2 &&
-            typeof args[0] === 'string' &&
-            typeof args[1] === 'string'
-        ) {
-            const [dateTimeString, format] = args
-            this.set.apply(this, parseFormat(dateTimeString, format))
-        } else {
-            this.set(
-                args[0], // year
-                args[1], // month
-                args[2] ?? 1, // day
-                args[3] ?? 0, // hour
-                args[4] ?? 0, // minute
-                args[5] ?? 0, // second
-                args[6] ?? 0 // ms
-            )
+        const strategyClass = getStrategyClass(args)
+        if (!strategyClass) {
+            throw new Error('Invalid date argument')
         }
+
+        const strategy: InitStrategy = new strategyClass(this, args)
+        strategy.executeStrategy()
     }
 
     /**
@@ -121,7 +81,7 @@ class NepaliDate {
      * Handles all the operations and variables while setting the English date.
      *
      * @param date The English date to set.
-     * @param computeNepaliDate Flag indicating whether to compute the Nepali date. Default is `false`.
+     * @param computeNepaliDate Flag indicating whether to compute the Nepali date. Default is `true`.
      * @returns void
      */
     private _setDateObject(date: Date, computeNepaliDate: boolean = true) {
@@ -440,6 +400,16 @@ class NepaliDate {
             getDate(yearEn, month0EN, dayEn, hour, minute, second, ms),
             false
         )
+    }
+
+    /**
+     * Sets the Date object on the current NepaliDate object.
+     *
+     * @param date The Date object to set.
+     * @returns void
+     */
+    setDateObject(date: Date) {
+        this._setDateObject(date)
     }
 
     /**

@@ -12,23 +12,11 @@ import {
     WEEKDAYS_SHORT_NP,
 } from './constants'
 import { parseFormatTokens } from './utils'
-
-interface NepaliDate {
-    getYear: () => number
-    getMonth: () => number
-    getDate: () => number
-    getDay: () => number
-    getHours: () => number
-    getMinutes: () => number
-    getSeconds: () => number
-    getMilliseconds: () => number
-}
+import NepaliDate from './NepaliDate.types'
 
 type Locale = typeof LOCALE_EN | typeof LOCALE_NE
 
-interface Formatter {
-    (nepaliDate: NepaliDate, locale: Locale): string
-}
+type Formatter = (nepaliDate: NepaliDate, locale: Locale) => string
 
 /* Helper functions */
 
