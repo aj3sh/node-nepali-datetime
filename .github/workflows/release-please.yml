@@ -7,22 +7,17 @@ on:
         branches:
             - main
 
-permissions: {}
+permissions:
+    checks: 'write'
+
 jobs:
     release-please:
-        permissions:
-            contents: write # to create release commit (google-github-actions/release-please-action)
-            pull-requests: write # to create release PR (google-github-actions/release-please-action)
-
         runs-on: ubuntu-latest
         steps:
-            - uses: google-github-actions/release-please-action@v3
+            - uses: google-github-actions/release-please-action@v4
               id: release
               with:
                   token: ${{ secrets.GITHUB_TOKEN }}
-                  command: github-release
-                  release-type: node
-                  package-name: nepali-datetime
 
             # The logic below handles the npm publication:
             - uses: actions/checkout@v2
@@ -45,8 +40,8 @@ jobs:
               run: npm run build
               if: ${{ steps.release.outputs.release_created }}
 
-            - name: Publish to NPM
-              run: npm publish --access public
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-              if: ${{ steps.release.outputs.release_created }}
+            # - name: Publish to NPM
+            #   run: npm publish --access public
+            #   env:
+            #       NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+            #   if: ${{ steps.release.outputs.release_created }}

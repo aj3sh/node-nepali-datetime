@@ -1,0 +1,11 @@
+{
+    "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+    "packages": {
+        ".": {
+            "package-name": "nepali-datetime"
+        }
+    },
+    "pull-request-header": "Release PR",
+    "pull-request-title-pattern": "chore: release v${version}",
+    "release-type": "node"
+}
