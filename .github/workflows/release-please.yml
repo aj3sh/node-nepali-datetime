@@ -1,6 +1,4 @@
-# Creates a Github release and NPM publish after the merge of
-# release PR created by release-pr.yml
-name: 'Release'
+name: 'Release Please'
 
 on:
     push:
